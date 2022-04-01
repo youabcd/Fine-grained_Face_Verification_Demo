@@ -1,0 +1,2 @@
+# Fine-grained_Face_Verification_Demo
+这是基于余弦相似度度量学习的细粒度人脸认证的演示程序
