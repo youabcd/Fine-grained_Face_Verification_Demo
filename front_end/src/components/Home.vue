@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div></div>
     <div style="display: flex;justify-content: center">
       <el-upload
         class="avatar-uploader"
@@ -8,8 +9,19 @@
         :show-file-list="false"
         :on-success="handleAvatarSuccess1"
         :before-upload="beforeAvatarUpload">
-        <img v-if="image1" :src="image1" class="avatar">
-        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        <div v-if="image1" class="showImage">
+          <img :src="image1" class="avatar">
+          <div class="mask">
+            <i class="el-icon-edit" @click.stop="changeImage(1)"
+               style="color: white;font-size: 24px;margin-top: 52px"></i>
+            <i class="el-icon-delete" @click.stop="deleteImage(1)"
+               style="color: white;font-size: 24px;margin-top: 52px;margin-left: 15px"></i>
+          </div>
+        </div>
+        <div v-else>
+          <i class="el-icon-plus avatar-uploader-icon"></i>
+          <div style="font-size: 12px;margin-top: 5px">点击上传图片1</div>
+        </div>
       </el-upload>
       <el-upload
         class="avatar-uploader"
@@ -18,16 +30,23 @@
         :show-file-list="false"
         :on-success="handleAvatarSuccess2"
         :before-upload="beforeAvatarUpload">
-        <img v-if="image2" :src="image2" class="avatar">
-        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        <div v-if="image2" class="showImage">
+          <img :src="image2" class="avatar">
+          <div class="mask">
+            <i class="el-icon-edit" @click.stop="changeImage(2)"
+               style="color: white;font-size: 24px;margin-top: 52px"></i>
+            <i class="el-icon-delete" @click.stop="deleteImage(2)"
+               style="color: white;font-size: 24px;margin-top: 52px;margin-left: 15px"></i>
+          </div>
+        </div>
+        <div v-else>
+          <i class="el-icon-plus avatar-uploader-icon"></i>
+          <div style="font-size: 12px;margin-top: 5px">点击上传图片2</div>
+        </div>
       </el-upload>
     </div>
 
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
-
-    <el-dialog title="图片剪裁" :visible.sync="openCropper" append-to-body>
+    <el-dialog title="图片剪裁" :visible.sync="openCropper" width="600px" center style="text-align: center">
       <div class="cropperContent">
         <vueCropper
           ref="cropper"
@@ -44,6 +63,16 @@
         <el-button type="primary" @click="finishCrop" :loading="loading">确认</el-button>
       </div>
     </el-dialog>
+
+    <div v-show="ifResult" class="showResult">
+      <div>
+        <span>result: </span>{{result}}
+      </div>
+      <div>
+        <span>cosine similarity: </span>{{cs}}
+      </div>
+    </div>
+    <div v-show="!ifResult" class="showResult"></div>
 
     <div>
       <el-button type="primary" @click="postPicture">开始检测</el-button>
@@ -65,8 +94,6 @@ export default {
         cropWidth: 64,
         cropHeight: 64,
       },
-      dialogImageUrl: '',
-      dialogVisible: false,
       openCropper: false,
       loading: false,
       image1: '',
@@ -74,15 +101,18 @@ export default {
       whichImage: 1,
       result: '',
       cs: 1,
+      ifResult: false,
+      origin1: '',
+      origin2: '',
     }
   },
   methods: {
     postPicture() {
-      if(this.image1 === ''){
+      if (this.image1 === '') {
         this.$message.error("请传入图片1")
         return
       }
-      if(this.image2 === ''){
+      if (this.image2 === '') {
         this.$message.error("请传入图片2")
         return
       }
@@ -92,17 +122,17 @@ export default {
       this.$axios.post('/axiosapi/cropped_image', data, {})
         .then((res) => {
           console.log(res)
-          this.result=res.data['result']
-          this.cs=res.data['cs']
-          this.$message.success(this.cs)
+          this.result = res.data['result']
+          this.cs = res.data['cs']
+          this.ifResult = true
+          // this.$message.success(this.cs)
         }).catch((err) => {
         console.log(err)
       })
     },
     handleAvatarSuccess1(res, file, fileList) {
       this.$nextTick(() => {
-        console.log("res", res)
-        console.log("file", file)
+        this.origin1 = URL.createObjectURL(file.raw)
         this.option.img = URL.createObjectURL(file.raw)
         this.whichImage = 1
         this.openCropper = true
@@ -110,14 +140,14 @@ export default {
     },
     handleAvatarSuccess2(res, file, fileList) {
       this.$nextTick(() => {
-        console.log("res", res)
-        console.log("file", file)
+        this.origin2 = URL.createObjectURL(file.raw)
         this.option.img = URL.createObjectURL(file.raw)
         this.whichImage = 2
         this.openCropper = true
       })
     },
     beforeAvatarUpload(file) {
+      this.ifResult = false
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -131,31 +161,39 @@ export default {
     },
     finishCrop() {
       this.$refs.cropper.getCropData((data) => {
-        console.log("crop data", data)
-        if(this.whichImage === 1){
+        if (this.whichImage === 1) {
           this.image1 = data
-        }
-        else if(this.whichImage === 2){
+        } else if (this.whichImage === 2) {
           this.image2 = data
         }
       });
       this.openCropper = false
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    changeImage(k) {
+      if (k === 1) {
+        this.whichImage = 1
+        this.option.img = this.origin1
+        this.openCropper = true
+      } else {
+        this.whichImage = 2
+        this.option.img = this.origin2
+        this.openCropper = true
+      }
     },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    deleteImage(k) {
+      if (k === 1) {
+        this.image1 = ''
+      } else {
+        this.image2 = ''
+      }
     },
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.cropperContent{
-  text-align: center;
+.cropperContent {
+  margin-left: 25px;
   width: 500px;
   height: 500px;
   background: pink;
@@ -179,9 +217,10 @@ export default {
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 128px;
-  height: 128px;
-  line-height: 128px;
+  /*width: 128px;*/
+  /*height: 128px;*/
+  /*line-height: 128px;*/
+  margin-top: 50px;
   text-align: center;
 }
 
@@ -189,5 +228,24 @@ export default {
   width: 128px;
   height: 128px;
   display: block;
+  position: absolute;
+}
+
+.mask {
+  position: absolute;
+  height: 128px;
+  width: 128px;
+  background-color: black;
+  opacity: 0;
+}
+
+.showImage:hover .mask {
+  opacity: 0.6;
+  transition: all .4s ease;
+}
+
+.showResult {
+  height: 5vh;
+  text-align: center;
 }
 </style>
