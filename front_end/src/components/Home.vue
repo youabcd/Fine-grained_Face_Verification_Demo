@@ -170,6 +170,7 @@ export default {
       this.openCropper = false
     },
     changeImage(k) {
+      this.ifResult = false
       if (k === 1) {
         this.whichImage = 1
         this.option.img = this.origin1
@@ -181,6 +182,7 @@ export default {
       }
     },
     deleteImage(k) {
+      this.ifResult = false
       if (k === 1) {
         this.image1 = ''
       } else {
