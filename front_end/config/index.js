@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/axiosapi': {
-        //target : 'https://www.baidu.com/',
-        target : 'http://localhost:8000',
+        // target : 'http://localhost:8000',
+        target : 'http://114.115.255.143:8000',
         changeOrigin : true,   //允许跨域
         pathRewrite : {
           '^/axiosapi':''
@@ -25,7 +25,7 @@ module.exports = {
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 9000, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
