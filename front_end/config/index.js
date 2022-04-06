@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/axiosapi': {
-        // target : 'http://localhost:8000',
-        target : 'http://114.115.255.143:8000',
+        target : 'http://localhost:8000',
+        // target : 'http://114.115.255.143:8000',
         changeOrigin : true,   //允许跨域
         pathRewrite : {
           '^/axiosapi':''

@@ -6,7 +6,7 @@
           <el-image
             style="width: 40px; height: 40px"
             :src="require('../../static/logo.svg')"
-            :fit="fit"></el-image>
+            fit="cover"></el-image>
         </div>
         <div style="font-size: 22px;font-weight: bold;margin-top: 13px;margin-left: 5px">细粒度人脸认证</div>
       </div>
@@ -17,7 +17,7 @@
             <el-image
               style="width: 26px; height: 26px;margin-top: 18px"
               :src="require('../../static/github.svg')"
-              :fit="fit"></el-image>
+              fit="cover"></el-image>
           </div>
           <div style="margin-top: 18px;margin-left: 5px">
             <el-link :underline="false"><span style="font-size: 18px">演示程序代码</span></el-link>
@@ -28,7 +28,7 @@
             <el-image
               style="width: 26px; height: 26px;margin-top: 18px"
               :src="require('../../static/github.svg')"
-              :fit="fit"></el-image>
+              fit="cover"></el-image>
           </div>
           <div style="margin-top: 18px;margin-left: 5px">
             <el-link :underline="false"><span style="font-size: 18px">算法代码</span></el-link>
@@ -46,7 +46,7 @@
                   <el-image
                     style="width: 500px; height: 200px"
                     :src="require('../../static/show1.png')"
-                    :fit="fit"></el-image>
+                    fit="cover"></el-image>
                 </div>
                 <div style="font-size: 18px;margin-top: 50px;text-align: left;margin-left: 50px;margin-right: 50px">
                   本网站是基于余弦相似度学习的细粒度人脸认证的演示网站。在右侧上传两张人脸图像，点击开始检测即可得到两种图像为同一人还是双胞胎的预测结果。
@@ -57,7 +57,7 @@
                   <el-image
                     style="width: 200px; height: 200px"
                     :src="require('../../static/show_crop.jpg')"
-                    :fit="fit"></el-image>
+                    fit="cover"></el-image>
                 </div>
                 <div style="font-size: 18px;margin-left: 25px;margin-right: 50px;margin-top: 120px;text-align: left">
                   将上传的图片进行裁剪时，请参考左侧所示的截取方式，将人脸尽可能包括。
@@ -114,7 +114,7 @@
               </el-upload>
             </div>
 
-            <div v-show="!ifResult" class="showResult">
+            <div v-show="ifResult" class="showResult">
               <div>
                 <span style="color:#606266;">result:&nbsp;</span>
                 <span v-if="result==='same'" style="color: #67C23A">{{result}}</span>
@@ -125,7 +125,7 @@
                 <span>{{cs}}</span>
               </div>
             </div>
-            <div v-show="ifResult" class="showResult"></div>
+            <div v-show="!ifResult" class="showResult"></div>
 
             <div>
               <el-button type="primary" style="margin-left: 170px" @click="postPicture">开始检测</el-button>
@@ -265,9 +265,7 @@
         }
       },
       gotoHome(){
-        this.$router.push({
-          path:'/'
-        })
+        location.reload()
       },
       gotoGit1(){
         window.open('https://github.com/youabcd/Fine-grained_Face_Verification_Demo')
