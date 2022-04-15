@@ -23,6 +23,6 @@ def inference(img1, img2, parameter, feature):
         print("same")
         res = "same"
     else:
-        print("twins")
-        res = "twins"
+        print("difference")
+        res = "difference"
     return res, cs
